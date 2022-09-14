@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, render_template
 from flask_restful import Api,Resource
 from flask_sqlalchemy import SQLAlchemy
 from http import HTTPStatus
@@ -35,6 +35,7 @@ db = SQLAlchemy(app)
 api=Api(app)
 migrate = Migrate(app,db)
 
+
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # this is the primary key
     title = db.Column(db.String(80), nullable=False)
@@ -70,6 +71,11 @@ class Movie(db.Model):
         data.year = year
         data.genre = genre
         db.session.commit()
+
+@app.route("/")
+def home():
+    if request.method=="GET":
+        return render_template("moviehomepage.html")
 
 class AllMovies(Resource):
     def post(self):
@@ -128,7 +134,7 @@ class AllMovies_getbyID(Resource):
 api.add_resource(AllMovies,"/movies")
 api.add_resource(AllMovies_getbyID,"/movies/<int:movie_id>")
 if __name__=="__main__":
-    app.run()
+    app.run(port=5001)
 
 # class User(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
